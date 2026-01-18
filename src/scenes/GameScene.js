@@ -486,7 +486,7 @@ export default class GameScene extends Phaser.Scene {
         const sprites = {
             1: { key: 'enemy-small', anim: 'enemy-small-fly', scale: 3, size: [14, 14] },
             2: { key: 'l2-enemy-small', anim: 'l2-enemy-small-fly', scale: 1.5, size: [40, 40] },
-            3: { key: 'l3-enemy-small', anim: 'l3-enemy-small-fly', scale: 0.5, size: [50, 60] } // Fire Haunt
+            3: { key: 'l3-enemy-small', anim: 'l3-enemy-small-fly', scale: 0.55, size: [55, 66] } // Fire Haunt
         };
         const s = sprites[this.level] || sprites[1];
 
@@ -506,7 +506,7 @@ export default class GameScene extends Phaser.Scene {
         const sprites = {
             1: { key: 'enemy-medium', anim: 'enemy-medium-fly', scale: 3, size: [28, 14], rotate: false },
             2: { key: 'l2-enemy-medium', anim: 'l2-enemy-medium-fly', scale: 1.5, size: [40, 40], rotate: false },
-            3: { key: 'l3-enemy-medium', anim: 'l3-enemy-medium-fly', scale: 0.7, size: [60, 60], rotate: false } // Jumping Demon
+            3: { key: 'l3-enemy-medium', anim: 'l3-enemy-medium-fly', scale: 0.77, size: [66, 66], rotate: false } // Jumping Demon
         };
         const s = sprites[this.level] || sprites[1];
 
@@ -530,7 +530,7 @@ export default class GameScene extends Phaser.Scene {
         const sprites = {
             1: { key: 'enemy-big', anim: 'enemy-big-fly', scale: 2.5, size: [28, 28] },
             2: { key: 'l2-enemy-big', anim: 'l2-enemy-big-fly', scale: 1.5, size: [40, 40] },
-            3: { key: 'l3-enemy-big', anim: 'l3-enemy-big-fly', scale: 1.8, size: [40, 40], rotate: true } // Flying eye
+            3: { key: 'l3-enemy-big', anim: 'l3-enemy-big-fly', scale: 2.0, size: [44, 44], rotate: false } // Flying eye
         };
         const s = sprites[this.level] || sprites[1];
 
@@ -564,11 +564,6 @@ export default class GameScene extends Phaser.Scene {
             if (enemy.trackPlayer && this.player.active) {
                 const dx = this.player.x - enemy.x;
                 enemy.setVelocityX(dx * 0.5);
-            }
-
-            // Spinning flying eye in Level 3
-            if (this.level === 3 && enemy.enemyType === 'big') {
-                enemy.angle += 3;
             }
         });
     }
