@@ -591,6 +591,9 @@ export default class GameScene extends Phaser.Scene {
 
     updateEnemies(time) {
         this.enemies.getChildren().forEach(enemy => {
+            // Skip if enemy was destroyed
+            if (!enemy || !enemy.active) return;
+
             if (enemy.y > 680) {
                 enemy.destroy();
                 return;
@@ -601,7 +604,7 @@ export default class GameScene extends Phaser.Scene {
                 enemy.lastShot = time;
             }
 
-            if (enemy.trackPlayer && this.player.active) {
+            if (enemy.trackPlayer && this.player && this.player.active) {
                 const dx = this.player.x - enemy.x;
                 enemy.setVelocityX(dx * 0.5);
             }
@@ -623,6 +626,9 @@ export default class GameScene extends Phaser.Scene {
     }
 
     enemyShoot(enemy) {
+        // Safety check
+        if (!enemy || !enemy.active || !this.player || !this.player.active) return;
+
         const bullet = this.enemyBullets.create(enemy.x, enemy.y + 20, 'laser', 2);
         bullet.setScale(2);
         bullet.setTint(0xff0000);
@@ -1027,6 +1033,9 @@ export default class GameScene extends Phaser.Scene {
     // ============== COLLISIONS ==============
 
     hitEnemy(bullet, enemy) {
+        // Safety check - skip if already destroyed
+        if (!enemy || !enemy.active || !bullet || !bullet.active) return;
+
         // CRITICAL: Never process the boss through this function
         // Check both the flag AND if it's in the bossGroup
         if (enemy.isBossSprite || this.bossGroup.contains(enemy)) {
@@ -1062,13 +1071,16 @@ export default class GameScene extends Phaser.Scene {
     }
 
     playerHitByEnemy(player, enemy) {
+        // Safety check
+        if (!enemy || !enemy.active || !player || !player.active) return;
+
         // Check if this is the boss - use multiple checks for safety
         const isBoss = (this.boss && enemy === this.boss) ||
                        enemy.isBossSprite === true ||
                        this.bossGroup.contains(enemy);
 
         if (this.isInvincible || this.shieldActive) {
-            if (!isBoss) {
+            if (!isBoss && enemy.active) {
                 this.createExplosion(enemy.x, enemy.y, enemy.enemyType || 'small');
                 enemy.destroy();
             }
@@ -1076,7 +1088,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         this.takeDamage(isBoss ? 30 : 50);
-        if (!isBoss) {
+        if (!isBoss && enemy.active) {
             this.createExplosion(enemy.x, enemy.y, enemy.enemyType || 'small');
             enemy.destroy();
         }
