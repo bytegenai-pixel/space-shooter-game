@@ -192,14 +192,16 @@ export default class GameScene extends Phaser.Scene {
 
         // Secret: X key to skip to next level
         this.input.keyboard.on('keydown-X', () => {
-            if (!this.isDead) {
+            if (!this.isDead && !this.isSkipping) {
+                this.isSkipping = true;
                 // Stop all spawning and clear enemies
                 if (this.enemySpawnTimer) this.enemySpawnTimer.remove();
                 this.enemies.clear(true, true);
                 this.bossGroup.clear(true, true);
+                this.enemyBullets.clear(true, true);
                 this.bossActive = false;
+                this.waveInProgress = false;
 
-                this.music.stop();
                 if (this.level >= 3) {
                     // Victory!
                     this.scene.start('VictoryScene', { score: this.score });
@@ -258,14 +260,12 @@ export default class GameScene extends Phaser.Scene {
             fill: '#ff0', stroke: '#000', strokeThickness: 3
         }).setOrigin(0.5, 0).setDepth(100);
 
-        // Lives
-        this.livesText = this.add.text(464, 16, 'x' + this.lives, {
-            fontFamily: 'monospace', fontSize: '18px',
+        // Lives icon and text
+        this.livesIcon = this.add.sprite(420, 22, 'ship', 0).setScale(1.2).setDepth(100);
+        this.livesText = this.add.text(438, 14, this.lives.toString(), {
+            fontFamily: 'monospace', fontSize: '20px',
             fill: '#0f0', stroke: '#000', strokeThickness: 3
-        }).setOrigin(1, 0).setDepth(100);
-
-        // Lives icon
-        this.add.sprite(440, 24, 'ship', 0).setScale(1.5).setDepth(100);
+        }).setDepth(100);
 
         // Health bar
         this.healthBarBg = this.add.rectangle(240, 620, 200, 14, 0x333333).setDepth(100);
@@ -447,9 +447,11 @@ export default class GameScene extends Phaser.Scene {
         });
 
         // Spawn enemies - MORE enemies for frantic gameplay!
-        // Stage 3 gets extra enemies for chaos
+        // Stage 2 and 3 get extra enemies for chaos
         const baseCount = 8 + (this.level * 4) + (this.wave * 4);
-        const enemyCount = this.level === 3 ? baseCount + 6 : baseCount;
+        let enemyCount = baseCount;
+        if (this.level === 2) enemyCount = baseCount + 4;
+        if (this.level === 3) enemyCount = baseCount + 6;
         this.spawnWaveEnemies(enemyCount);
     }
 
@@ -504,11 +506,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     createSmallEnemy(x) {
-        // Level-specific sprites
+        // Level-specific sprites - normalized to ~48px display size
         const sprites = {
-            1: { key: 'enemy-small', anim: 'enemy-small-fly', scale: 3, size: [14, 14] },
-            2: { key: 'l2-enemy-small', anim: 'l2-enemy-small-fly', scale: 1.5, size: [40, 40] },
-            3: { key: 'l3-enemy-small', anim: 'l3-enemy-small-fly', scale: 0.55, size: [55, 66] } // Fire Haunt
+            1: { key: 'enemy-small', anim: 'enemy-small-fly', scale: 3, size: [14, 14] },       // 16*3=48
+            2: { key: 'l2-enemy-small', anim: 'l2-enemy-small-fly', scale: 1.0, size: [40, 40] }, // 48*1=48
+            3: { key: 'l3-enemy-small', anim: 'l3-enemy-small-fly', scale: 0.45, size: [45, 50] } // 112*0.45=50
         };
         const s = sprites[this.level] || sprites[1];
 
@@ -526,11 +528,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     createMediumEnemy(x) {
-        // Level-specific sprites
+        // Level-specific sprites - normalized to ~80-90px display size
         const sprites = {
-            1: { key: 'enemy-medium', anim: 'enemy-medium-fly', scale: 3, size: [28, 14], rotate: false },
-            2: { key: 'l2-enemy-medium', anim: 'l2-enemy-medium-fly', scale: 1.5, size: [40, 40], rotate: false },
-            3: { key: 'l3-enemy-medium', anim: 'l3-enemy-medium-fly', scale: 0.77, size: [66, 66], rotate: false } // Jumping Demon
+            1: { key: 'enemy-medium', anim: 'enemy-medium-fly', scale: 3, size: [28, 14], rotate: false },   // 32*3=96
+            2: { key: 'l2-enemy-medium', anim: 'l2-enemy-medium-fly', scale: 1.8, size: [40, 40], rotate: false }, // 48*1.8=86
+            3: { key: 'l3-enemy-medium', anim: 'l3-enemy-medium-fly', scale: 0.85, size: [75, 75], rotate: false } // 101*0.85=86
         };
         const s = sprites[this.level] || sprites[1];
 
@@ -558,11 +560,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     createBigEnemy(x) {
-        // Level-specific sprites
+        // Level-specific sprites - normalized to ~80px display size
         const sprites = {
-            1: { key: 'enemy-big', anim: 'enemy-big-fly', scale: 2.5, size: [28, 28] },
-            2: { key: 'l2-enemy-big', anim: 'l2-enemy-big-fly', scale: 1.5, size: [40, 40] },
-            3: { key: 'l3-enemy-big', anim: 'l3-enemy-big-fly', scale: 2.0, size: [44, 44], rotate: false } // Flying eye
+            1: { key: 'enemy-big', anim: 'enemy-big-fly', scale: 2.5, size: [28, 28] },     // 32*2.5=80
+            2: { key: 'l2-enemy-big', anim: 'l2-enemy-big-fly', scale: 1.7, size: [40, 40] }, // 48*1.7=82
+            3: { key: 'l3-enemy-big', anim: 'l3-enemy-big-fly', scale: 1.7, size: [40, 40], rotate: false } // 48*1.7=82
         };
         const s = sprites[this.level] || sprites[1];
 
@@ -1114,7 +1116,7 @@ export default class GameScene extends Phaser.Scene {
 
     loseLife() {
         this.lives--;
-        this.livesText.setText('x' + this.lives);
+        this.livesText.setText(this.lives.toString());
 
         if (this.lives <= 0) {
             this.gameOver();
@@ -1222,7 +1224,7 @@ export default class GameScene extends Phaser.Scene {
         else if (type === 'fireball') this.activateFireball();
         else if (type === 'life') {
             this.lives++;
-            this.livesText.setText('x' + this.lives);
+            this.livesText.setText(this.lives.toString());
         }
 
         this.showPowerupText(messages[type][0], messages[type][1]);
