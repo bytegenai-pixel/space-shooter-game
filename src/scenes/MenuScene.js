@@ -128,10 +128,6 @@ export default class MenuScene extends Phaser.Scene {
             'You\'re the only pilot in range.\n\n' +
             'Get in. Get answers.';
 
-        // Create a mask for the story area
-        const storyMask = this.add.rectangle(240, 280, 400, 180, 0x000000, 0)
-            .setVisible(false);
-
         const story = this.add.text(width / 2, 380, storyText, {
             fontFamily: 'monospace',
             fontSize: '14px',
@@ -143,17 +139,11 @@ export default class MenuScene extends Phaser.Scene {
         // Slow scroll animation - loops
         this.tweens.add({
             targets: story,
-            y: { from: 380, to: 100 },
-            duration: 20000,
+            y: { from: 380, to: 140 },
+            duration: 18000,
             repeat: -1,
             ease: 'Linear'
         });
-
-        // Fade mask at top and bottom of story area
-        const fadeTop = this.add.rectangle(240, 175, 480, 40, 0x000000, 1)
-            .setDepth(1);
-        const fadeBottom = this.add.rectangle(240, 385, 480, 40, 0x000000, 1)
-            .setDepth(1);
 
         // ===== DECORATIVE SHIP =====
 
