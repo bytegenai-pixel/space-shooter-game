@@ -64,7 +64,7 @@ export default class VictoryScene extends Phaser.Scene {
         });
 
         // Subtitle
-        const subtitleText = this.add.text(width / 2, 130, '>>> GALAXY SAVED <<<', {
+        const subtitleText = this.add.text(width / 2, 130, '>>> VEGA-9 SAVED <<<', {
             fontFamily: 'monospace',
             fontSize: '18px',
             fill: '#00ffff',
@@ -159,7 +159,7 @@ export default class VictoryScene extends Phaser.Scene {
         if (this.finalScore > highScore) {
             localStorage.setItem('highScore', this.finalScore);
 
-            const newRecordText = this.add.text(width / 2, 535, '!!! NEW GALAXY RECORD !!!', {
+            const newRecordText = this.add.text(width / 2, 535, '!!! NEW HIGH SCORE !!!', {
                 fontFamily: 'monospace',
                 fontSize: '18px',
                 fill: '#ff00ff',
@@ -193,7 +193,7 @@ export default class VictoryScene extends Phaser.Scene {
         const achievements = [
             { text: 'All 3 Sectors Cleared', color: '#00ff00' },
             { text: 'All Bosses Eliminated', color: '#ff8800' },
-            { text: 'Galaxy Champion', color: '#ffdd00' }
+            { text: 'Hero of Vega-9', color: '#ffdd00' }
         ];
 
         achievements.forEach((ach, i) => {

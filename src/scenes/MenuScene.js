@@ -54,96 +54,116 @@ export default class MenuScene extends Phaser.Scene {
         });
 
         // Dark overlay for better text readability
-        this.add.rectangle(240, 320, 480, 640, 0x000000, 0.3);
+        this.add.rectangle(240, 320, 480, 640, 0x000000, 0.4);
 
         // ===== EPIC TITLE =====
 
-        // Title glow/shadow layers
+        // Title glow/shadow layers for "INTO THE"
         for (let i = 3; i > 0; i--) {
-            const glowTitle = this.add.text(width / 2, 100, 'VOID', {
+            this.add.text(width / 2, 70, 'INTO THE', {
                 fontFamily: 'monospace',
-                fontSize: '72px',
-                fill: '#0088ff'
+                fontSize: '36px',
+                fill: '#ff6600'
             }).setOrigin(0.5).setAlpha(0.3 / i).setScale(1 + i * 0.05);
         }
 
-        // Main title - VOID
-        const titleVoid = this.add.text(width / 2, 100, 'VOID', {
+        // Main title - INTO THE
+        const titleInto = this.add.text(width / 2, 70, 'INTO THE', {
             fontFamily: 'monospace',
-            fontSize: '72px',
-            fill: '#ffffff',
-            stroke: '#0066cc',
-            strokeThickness: 8
-        }).setOrigin(0.5);
-
-        // Title glow effect for BLITZ
-        for (let i = 3; i > 0; i--) {
-            const glowBlitz = this.add.text(width / 2, 170, 'BLITZ', {
-                fontFamily: 'monospace',
-                fontSize: '72px',
-                fill: '#ff4400'
-            }).setOrigin(0.5).setAlpha(0.3 / i).setScale(1 + i * 0.05);
-        }
-
-        // Main title - BLITZ
-        const titleBlitz = this.add.text(width / 2, 170, 'BLITZ', {
-            fontFamily: 'monospace',
-            fontSize: '72px',
-            fill: '#ffcc00',
+            fontSize: '36px',
+            fill: '#ffaa00',
             stroke: '#ff4400',
-            strokeThickness: 8
+            strokeThickness: 4
         }).setOrigin(0.5);
 
-        // Title animation - subtle shake/pulse
+        // Title glow effect for INFERNO
+        for (let i = 3; i > 0; i--) {
+            this.add.text(width / 2, 120, 'INFERNO', {
+                fontFamily: 'monospace',
+                fontSize: '56px',
+                fill: '#ff2200'
+            }).setOrigin(0.5).setAlpha(0.3 / i).setScale(1 + i * 0.05);
+        }
+
+        // Main title - INFERNO
+        const titleInferno = this.add.text(width / 2, 120, 'INFERNO', {
+            fontFamily: 'monospace',
+            fontSize: '56px',
+            fill: '#ff4400',
+            stroke: '#ffcc00',
+            strokeThickness: 6
+        }).setOrigin(0.5);
+
+        // Title animation - fire flicker effect
         this.tweens.add({
-            targets: [titleVoid],
+            targets: [titleInto],
             scaleX: { from: 1, to: 1.02 },
             scaleY: { from: 1, to: 0.98 },
-            duration: 1500,
+            duration: 800,
             yoyo: true,
             repeat: -1,
             ease: 'Sine.easeInOut'
         });
 
         this.tweens.add({
-            targets: [titleBlitz],
-            scaleX: { from: 1, to: 0.98 },
-            scaleY: { from: 1, to: 1.02 },
-            duration: 1200,
+            targets: [titleInferno],
+            scaleX: { from: 1, to: 1.03 },
+            scaleY: { from: 1, to: 0.97 },
+            alpha: { from: 1, to: 0.9 },
+            duration: 600,
             yoyo: true,
             repeat: -1,
             ease: 'Sine.easeInOut'
         });
 
-        // Subtitle with typing effect
-        const subtitleText = '>>> ENTER THE VOID <<<';
-        const subtitle = this.add.text(width / 2, 230, '', {
-            fontFamily: 'monospace',
-            fontSize: '16px',
-            fill: '#00ffff'
-        }).setOrigin(0.5);
+        // ===== SCROLLING STORY =====
 
-        // Type out subtitle
-        let charIndex = 0;
-        this.time.addEvent({
-            delay: 80,
-            callback: () => {
-                if (charIndex < subtitleText.length) {
-                    subtitle.setText(subtitleText.substring(0, charIndex + 1));
-                    charIndex++;
-                }
-            },
-            repeat: subtitleText.length - 1
+        const storyText =
+            'The Vega-9 colony went dark.\n\n' +
+            'Recon footage shows sand where\n' +
+            'there should be steel, fire where\n' +
+            'there should be sky.\n\n' +
+            'Something is tearing the planet\n' +
+            'apart from the inside.\n\n' +
+            'You\'re the only pilot in range.\n\n' +
+            'Get in. Get answers.';
+
+        // Create a mask for the story area
+        const storyMask = this.add.rectangle(240, 280, 400, 180, 0x000000, 0)
+            .setVisible(false);
+
+        const story = this.add.text(width / 2, 380, storyText, {
+            fontFamily: 'monospace',
+            fontSize: '14px',
+            fill: '#888888',
+            align: 'center',
+            lineSpacing: 6
+        }).setOrigin(0.5, 0);
+
+        // Slow scroll animation - loops
+        this.tweens.add({
+            targets: story,
+            y: { from: 380, to: 100 },
+            duration: 20000,
+            repeat: -1,
+            ease: 'Linear'
         });
 
-        // Decorative ship with engine trail
-        this.ship = this.add.sprite(240, 420, 'ship').setScale(5);
+        // Fade mask at top and bottom of story area
+        const fadeTop = this.add.rectangle(240, 175, 480, 40, 0x000000, 1)
+            .setDepth(1);
+        const fadeBottom = this.add.rectangle(240, 385, 480, 40, 0x000000, 1)
+            .setDepth(1);
+
+        // ===== DECORATIVE SHIP =====
+
+        this.ship = this.add.sprite(240, 480, 'ship').setScale(4);
         this.ship.play('ship-thrust');
 
         // Ship floating animation
         this.tweens.add({
             targets: this.ship,
-            y: { from: 420, to: 450 },
+            y: { from: 480, to: 500 },
             duration: 2000,
             yoyo: true,
             repeat: -1,
@@ -160,13 +180,9 @@ export default class MenuScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
 
-        // ===== MENU BUTTONS =====
+        // ===== MENU BUTTON =====
 
-        const menuY = 310;
-        const menuSpacing = 55;
-
-        // Play button - most prominent
-        const playBtn = this.createButton(width / 2, menuY, '[ START MISSION ]', '#00ff00', () => {
+        const playBtn = this.createButton(width / 2, 430, '[ LAUNCH ]', '#00ff00', () => {
             this.music.stop();
             this.cameras.main.flash(500, 255, 255, 255);
             this.time.delayedCall(300, () => {
@@ -174,44 +190,45 @@ export default class MenuScene extends Phaser.Scene {
             });
         });
 
-        // High scores button
-        const scoresBtn = this.createButton(width / 2, menuY + menuSpacing, '[ HIGH SCORES ]', '#ffff00', () => {
-            this.showHighScores();
+        // Pulsing effect on play button
+        this.tweens.add({
+            targets: playBtn,
+            alpha: { from: 1, to: 0.7 },
+            duration: 800,
+            yoyo: true,
+            repeat: -1
         });
 
         // ===== BOTTOM INFO =====
 
         // Controls box
-        const controlsBg = this.add.rectangle(width / 2, 560, 300, 70, 0x000000, 0.5)
-            .setStrokeStyle(1, 0x444444);
+        this.add.rectangle(width / 2, 575, 300, 55, 0x000000, 0.6)
+            .setStrokeStyle(1, 0x333333);
 
-        this.add.text(width / 2, 540, 'WASD/ARROWS - Move | SPACE - Fire', {
+        this.add.text(width / 2, 560, 'WASD/ARROWS - Move | SPACE - Fire', {
             fontFamily: 'monospace',
-            fontSize: '11px',
-            fill: '#888888'
-        }).setOrigin(0.5);
-
-        this.add.text(width / 2, 560, 'Touch & drag on mobile', {
-            fontFamily: 'monospace',
-            fontSize: '11px',
+            fontSize: '10px',
             fill: '#666666'
         }).setOrigin(0.5);
 
-        this.add.text(width / 2, 580, 'Z - Skip to boss | X - Skip level', {
+        this.add.text(width / 2, 578, 'Touch & drag on mobile', {
             fontFamily: 'monospace',
             fontSize: '10px',
-            fill: '#444444'
+            fill: '#555555'
         }).setOrigin(0.5);
 
-        // Version/credit
-        this.add.text(width / 2, 620, 'v1.0', {
+        this.add.text(width / 2, 596, 'Z - Skip to boss | X - Skip level', {
             fontFamily: 'monospace',
-            fontSize: '10px',
+            fontSize: '9px',
             fill: '#333333'
         }).setOrigin(0.5);
 
-        // High scores panel (hidden initially)
-        this.createHighScoresPanel();
+        // Version
+        this.add.text(width / 2, 625, 'v1.0', {
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            fill: '#222222'
+        }).setOrigin(0.5);
 
         // Keyboard shortcuts
         this.input.keyboard.once('keydown-SPACE', () => {
@@ -251,7 +268,7 @@ export default class MenuScene extends Phaser.Scene {
             { key: 'enemy-small', anim: 'enemy-small-fly', scale: 2 },
             { key: 'enemy-medium', anim: 'enemy-medium-fly', scale: 2 },
             { key: 'l2-enemy-small', anim: 'l2-enemy-small-fly', scale: 1 },
-            { key: 'l3-enemy-small', anim: 'l3-enemy-small-fly', scale: 2 }
+            { key: 'l3-enemy-small', anim: 'l3-enemy-small-fly', scale: 0.3 }
         ];
         const config = Phaser.Math.RND.pick(enemies);
 
@@ -276,7 +293,7 @@ export default class MenuScene extends Phaser.Scene {
     createButton(x, y, text, color, callback) {
         const btn = this.add.text(x, y, text, {
             fontFamily: 'monospace',
-            fontSize: '22px',
+            fontSize: '24px',
             fill: color,
             stroke: '#000000',
             strokeThickness: 4
@@ -303,86 +320,5 @@ export default class MenuScene extends Phaser.Scene {
         btn.on('pointerdown', callback);
 
         return btn;
-    }
-
-    createHighScoresPanel() {
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
-
-        this.scoresPanel = this.add.container(width / 2, height / 2);
-        this.scoresPanel.setVisible(false);
-        this.scoresPanel.setDepth(100);
-
-        // Darker background
-        const bg = this.add.rectangle(0, 0, 380, 420, 0x000000, 0.95)
-            .setStrokeStyle(3, 0x00ffff);
-        this.scoresPanel.add(bg);
-
-        // Decorative corners
-        const cornerSize = 20;
-        const corners = [
-            [-180, -200], [180, -200], [-180, 200], [180, 200]
-        ];
-        corners.forEach(([cx, cy]) => {
-            const corner = this.add.rectangle(cx, cy, cornerSize, cornerSize, 0x00ffff);
-            this.scoresPanel.add(corner);
-        });
-
-        const title = this.add.text(0, -170, '=== PILOT RECORDS ===', {
-            fontFamily: 'monospace',
-            fontSize: '22px',
-            fill: '#00ffff'
-        }).setOrigin(0.5);
-        this.scoresPanel.add(title);
-
-        this.scoresList = this.add.text(0, -20, '', {
-            fontFamily: 'monospace',
-            fontSize: '18px',
-            fill: '#ffffff',
-            align: 'center',
-            lineSpacing: 20
-        }).setOrigin(0.5);
-        this.scoresPanel.add(this.scoresList);
-
-        const closeBtn = this.add.text(0, 170, '[ CLOSE ]', {
-            fontFamily: 'monospace',
-            fontSize: '20px',
-            fill: '#ff4444',
-            stroke: '#000',
-            strokeThickness: 3
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-        closeBtn.on('pointerover', () => closeBtn.setFill('#ffffff'));
-        closeBtn.on('pointerout', () => closeBtn.setFill('#ff4444'));
-        closeBtn.on('pointerdown', () => this.scoresPanel.setVisible(false));
-
-        this.scoresPanel.add(closeBtn);
-    }
-
-    showHighScores() {
-        const highScore = localStorage.getItem('highScore') || 0;
-        const bestWave = localStorage.getItem('bestWave') || 1;
-        const bestLevel = localStorage.getItem('bestLevel') || 1;
-        const completed = localStorage.getItem('gameCompleted') === 'true';
-
-        let statusText = completed ? '>>> GALAXY CHAMPION <<<' : 'Status: In Progress';
-        let statusColor = completed ? '#00ff00' : '#ffff00';
-
-        this.scoresList.setText(
-            `HIGH SCORE\n` +
-            `${highScore}\n\n` +
-            `FURTHEST LEVEL: ${bestLevel}\n` +
-            `FURTHEST WAVE: ${bestWave}\n\n` +
-            `${statusText}`
-        );
-
-        this.scoresPanel.setVisible(true);
-        this.scoresPanel.setScale(0.5);
-        this.tweens.add({
-            targets: this.scoresPanel,
-            scale: 1,
-            duration: 200,
-            ease: 'Back.easeOut'
-        });
     }
 }

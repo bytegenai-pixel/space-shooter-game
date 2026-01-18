@@ -81,8 +81,7 @@ export default class GameScene extends Phaser.Scene {
             explosion: this.sound.add('sfx-explosion', { volume: 0.4 }),
             hit: this.sound.add('sfx-hit', { volume: 0.5 }),
             powerup: this.sound.add('sfx-powerup', { volume: 0.6 }),
-            playerDeath: this.sound.add('sfx-player-death', { volume: 0.5 }),
-            bossWarning: this.sound.add('sfx-boss-warning', { volume: 0.7 })
+            playerDeath: this.sound.add('sfx-player-death', { volume: 0.5 })
         };
 
         // Start level music
@@ -591,11 +590,6 @@ export default class GameScene extends Phaser.Scene {
 
     startBossFight() {
         this.bossActive = true;
-
-        // Play boss warning sound repeatedly
-        this.sounds.bossWarning.play();
-        this.time.delayedCall(400, () => this.sounds.bossWarning.play());
-        this.time.delayedCall(800, () => this.sounds.bossWarning.play());
 
         this.announceText.setText('WARNING!\nBOSS APPROACHING');
         this.announceText.setFill('#ff0000');
@@ -1212,10 +1206,10 @@ export default class GameScene extends Phaser.Scene {
 
     createExplosion(x, y, type) {
         const config = {
-            small: ['explosion', 'explode', 3],
-            medium: ['explosion-large', 'explode-large', 2],
-            big: ['explosion-big', 'explode-big', 1.5],
-            boss: ['explosion-boss', 'explode-boss', 1.2]
+            small: ['explosion', 'explode', 4],
+            medium: ['explosion-large', 'explode-large', 2.5],
+            big: ['explosion-big', 'explode-big', 2],
+            boss: ['explosion-boss', 'explode-boss', 1.5]
         };
 
         const [sprite, anim, scale] = config[type] || config.small;
