@@ -156,10 +156,10 @@ export default class GameScene extends Phaser.Scene {
 
     createPlayer() {
         this.player = this.physics.add.sprite(240, 550, 'ship');
-        this.player.setScale(3);
+        this.player.setScale(2.55);
         this.player.setCollideWorldBounds(true);
         this.player.play('ship-idle');
-        this.player.setSize(12, 20);
+        this.player.setSize(10, 17);
         this.player.setDepth(10);
 
         this.shieldSprite = this.add.graphics();

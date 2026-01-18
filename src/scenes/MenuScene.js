@@ -57,18 +57,8 @@ export default class MenuScene extends Phaser.Scene {
         // Dark overlay for better text readability
         this.add.rectangle(240, 320, 480, 640, 0x000000, 0.4);
 
-        // ===== EPIC TITLE =====
+        // ===== TITLE =====
 
-        // Title glow/shadow layers for "INTO THE"
-        for (let i = 3; i > 0; i--) {
-            this.add.text(width / 2, 70, 'INTO THE', {
-                fontFamily: 'monospace',
-                fontSize: '36px',
-                fill: '#ff6600'
-            }).setOrigin(0.5).setAlpha(0.3 / i).setScale(1 + i * 0.05);
-        }
-
-        // Main title - INTO THE
         const titleInto = this.add.text(width / 2, 70, 'INTO THE', {
             fontFamily: 'monospace',
             fontSize: '36px',
@@ -77,16 +67,6 @@ export default class MenuScene extends Phaser.Scene {
             strokeThickness: 4
         }).setOrigin(0.5);
 
-        // Title glow effect for INFERNO
-        for (let i = 3; i > 0; i--) {
-            this.add.text(width / 2, 120, 'INFERNO', {
-                fontFamily: 'monospace',
-                fontSize: '56px',
-                fill: '#ff2200'
-            }).setOrigin(0.5).setAlpha(0.3 / i).setScale(1 + i * 0.05);
-        }
-
-        // Main title - INFERNO
         const titleInferno = this.add.text(width / 2, 120, 'INFERNO', {
             fontFamily: 'monospace',
             fontSize: '56px',
@@ -95,22 +75,9 @@ export default class MenuScene extends Phaser.Scene {
             strokeThickness: 6
         }).setOrigin(0.5);
 
-        // Title animation - fire flicker effect
-        this.tweens.add({
-            targets: [titleInto],
-            scaleX: { from: 1, to: 1.02 },
-            scaleY: { from: 1, to: 0.98 },
-            duration: 800,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
         this.tweens.add({
             targets: [titleInferno],
-            scaleX: { from: 1, to: 1.03 },
-            scaleY: { from: 1, to: 0.97 },
-            alpha: { from: 1, to: 0.9 },
+            scale: { from: 1, to: 1.03 },
             duration: 600,
             yoyo: true,
             repeat: -1,
@@ -148,7 +115,7 @@ export default class MenuScene extends Phaser.Scene {
 
         // ===== DECORATIVE SHIP =====
 
-        this.ship = this.add.sprite(240, 500, 'ship').setScale(4);
+        this.ship = this.add.sprite(240, 500, 'ship').setScale(3.2);
         this.ship.play('ship-thrust');
 
         // Ship floating animation
