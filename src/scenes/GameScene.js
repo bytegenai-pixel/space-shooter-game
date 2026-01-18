@@ -80,7 +80,7 @@ export default class GameScene extends Phaser.Scene {
 
         // Setup sounds
         this.sounds = {
-            explosion: this.sound.add('sfx-explosion', { volume: 0.4 }),
+            explosion: this.sound.add('sfx-explosion', { volume: 0.6 }),
             hit: this.sound.add('sfx-hit', { volume: 0.5 }),
             powerup: this.sound.add('sfx-powerup', { volume: 0.6 }),
             playerDeath: this.sound.add('sfx-player-death', { volume: 0.5 })
